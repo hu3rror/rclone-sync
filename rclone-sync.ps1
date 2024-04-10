@@ -61,6 +61,11 @@ function Sync-Folders {
     # run full rclone command / 运行完整的 rclone 命令
     Invoke-Expression $rcloneCommand
 
+    # check if log file is empty and delete if true / 检查日志文件是否为空，如果是则删除
+    if ((Get-Content $logFile).Length -eq 0) {
+        Remove-Item -Path $logFile -Force
+    }
+
     # clean log files / 清理日志文件
     $logFiles = Get-ChildItem -Path $logFolder -Filter "$taskName.$destName.*.log" -File | Sort-Object LastWriteTime
     if ($logFiles.Count -gt $maximumLogFiles) {
