@@ -2,7 +2,7 @@
  Runs `rclone sync` to sync folders.
 #>
 
-# ------ constants and variables Start ------
+# ------ variables Start ------
 
 # 设置 rclone flags
 $rcloneFlags = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"
@@ -13,7 +13,7 @@ $showCommand = $true
 # 设置最大日志文件数量
 $maximumLogFiles = 15
 
-# ------ constants and variables End ------
+# ------ variables End ------
 
 
 # ------ Sync-Folders Function Start ------
