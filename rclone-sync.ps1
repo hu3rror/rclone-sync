@@ -23,39 +23,39 @@ function Sync-Folders {
         [int]$maximumLogFiles = 15
     )
 
-    # rclone 同步文件夹主要命令
+    # rclone sync folder command
     $rcloneCommand = "rclone sync $localFolder `"${destName}:$destFolder`""
 
-    # 添加 exclude 参数
-    $excludeArgs = $exclude | ForEach-Object { "--exclude `"$_`"" }    # 将数组转换为逗号分隔的字符串
+    # add exclude parameter
+    $excludeArgs = $exclude | ForEach-Object { "--exclude `"$_`"" }    # convert array to comma separated string
 
     if ($excludeArgs.Length -gt 0) {
         $rcloneCommand += " $($excludeArgs -join " ")"
     }
 
-    # 添加 --log-file 参数
+    # add --log-file parameter
     $logFile = Join-Path -Path $logFolder -ChildPath "Untitled.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"
 
     if ($taskName.Length -gt 0) {
-        $logFile = Join-Path -Path $logFolder -ChildPath "$taskName.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"    # 定义日志文件名称格式
+        $logFile = Join-Path -Path $logFolder -ChildPath "$taskName.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"    # define log file name format
     }
 
     $rcloneCommand += " --log-file=$logFile"
 
-    # 添加更多 rclone flags 选项
+    # add more rclone flags options
     if ($rcloneFlags.Length -gt 0) {
         $rcloneCommand += " $rcloneFlags"
     }
 
-    # 显示 rclone 完整命令
+    # show full rclone command
     if ($showCommand) {
         Write-Host $rcloneCommand
     }
 
-    # 执行 rclone 完整命令
+    # run full rclone command
     Invoke-Expression $rcloneCommand
 
-    # 清理日志文件
+    # clean log files
     $logFiles = Get-ChildItem -Path $logFolder -Filter "$taskName.$destName.*.log" -File | Sort-Object LastWriteTime
     if ($logFiles.Count -gt $maximumLogFiles) {
         $oldLogFiles = $logFiles[0..($logFiles.Count - $maximumLogFiles - 1)]
@@ -71,29 +71,29 @@ function Sync-Folders {
 
 # ------ main Start ------
 
-# 检查 rclone 是否已安装
+# check if rclone is installed
 if (-not (Get-Command "rclone" -ErrorAction SilentlyContinue)) {
-    Write-Error "rclone 未安装,请先安装 rclone。"
+    Write-Error "rclone is not installed, please install rclone first."
     return
 }
 
-# 创建日志文件夹
+# create log folder
 $logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
 
 if (-not (Test-Path -Path $logFolder -PathType Container)) {
     New-Item -Path $logFolder -ItemType Directory | Out-Null
 }
 
-# 检测 config.json 文件是否存在
+# check if config.json file exists
 if (-not (Test-Path -Path "config.json" -PathType Leaf)) {
-    Write-Error "找不到同步配置文件：config.json"
+    Write-Error "cannot find sync config file：config.json"
     return
 }
 
-# 从 config.json 文件中读取同步配置并转换为对象
+# read sync config from config.json file and convert to object
 $syncConfig = Get-Content -Path "config.json" | ConvertFrom-Json
 
-# 遍历同步配置
+# traverse sync config
 foreach ($config in $syncConfig) {
     Sync-Folders `
         -localFolder $config.localFolder `
