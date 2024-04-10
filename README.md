@@ -15,12 +15,13 @@ This PowerShell script runs `rclone sync` to synchronize folders.
 ```
 ### Usage
 **Required Parameters:**
-- `destName`: Destination Cloud storage name specified in `rclone config`, e.g. "MyOneDrive"
-- `localFolder`: Local folder path, e.g. "C:\\Users\\username\\Downloads"
-- `destFolder`: Destination folder path, e.g. "/Backups/Downloads"
+- `destName`: Destination Cloud storage name specified in `rclone config`, e.g. `"MyOneDrive"`
+- `localFolder`: Local folder path, e.g. `"C:\\Users\\username\\Downloads"`
+- `destFolder`: Destination folder path, e.g. `"/Backups/Downloads"`
 
 **Optional Parameters:**
-- `taskName`: Task name, e.g. "Downloads"
-- `exclude`: Array of files or folders to exclude, e.g. ["/*.txt", "/.git"]
-- `rcloneFlags`: Additional rclone flags, e.g. "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"
-- `showCommand`: Display the full `rclone` command: `true` or `false`
+- `taskName`: Task name, e.g. `"Downloads"`
+- `exclude`: Array of files or folders to exclude, e.g. `["/*.txt", "/.git"]`
+- `rcloneFlags`: Additional rclone flags, e.g. `"--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"`
+- `showCommand`: Display the full `rclone` command: `$true` or `$false`
+- `maximumLogFiles`: Maximum number of log files to keep, e.g. `15`
