@@ -61,10 +61,10 @@ $ShowCommand = $true
 # 遍历同步配置
 foreach ($config in $syncConfig) {
     Sync-Folders `
-        -CloudServiceName $config.cloud_service_name `
-        -LocalFolder $config.local_folder `
-        -DestFolder $config.destination_folder `
-        -Exclude $config.exclude `
+        -CloudServiceName $config.DestName `
+        -LocalFolder $config.LocalFolder `
+        -DestFolder $config.DestFolder `
+        -Exclude $config.Exclude `
         -RcloneOptions $rcloneOptions `
         -ShowCommand:$ShowCommand
 }
