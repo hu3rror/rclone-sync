@@ -53,7 +53,7 @@ function Sync-Folders {
 $syncConfig = Get-Content -Path "sync-config.json" | ConvertFrom-Json
 
 # 设置同步选项
-$rcloneOptions = "--dry-run -vv"
+$rcloneOptions = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level NOTICE"
 
 # 是否显示完整命令
 $ShowCommand = $true
