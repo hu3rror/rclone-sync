@@ -61,8 +61,11 @@ function Sync-Folders {
     # run full rclone command / 运行完整的 rclone 命令
     Invoke-Expression $rcloneCommand
 
-    # check if log file is empty and delete if true / 检查日志文件是否为空，如果是则删除
-    if ((Get-Content $logFile).Length -eq 0) {
+    # check if log file is empty or first line is "INFO  : There was nothing to transfer" and delete if true / 检查日志文件是否为空或第一行是"INFO  : There was nothing to transfer",如果是则删除
+    $logContent = Get-Content -Path $logFile -ErrorAction SilentlyContinue
+    if ($logContent -and $logContent[0] -like "*INFO  : There was nothing to transfer*") {
+        Remove-Item -Path $logFile -Force
+    } elseif ((Get-Content $logFile).Length -eq 0) {
         Remove-Item -Path $logFile -Force
     }
 
