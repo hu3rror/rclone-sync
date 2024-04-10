@@ -1,5 +1,7 @@
 ## rclone-sync.ps1 - Folder Synchronization Script
 
+English | [中文](README_zh-CN.md)
+
 ### Description
 This PowerShell script runs `rclone sync` to synchronize folders.
 
