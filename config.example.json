@@ -6,7 +6,10 @@
         "destFolder": "/Backups/Books",
         "exclude": [
             "/*.txt"
-        ]
+        ],
+        "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
+        "showCommand": true,
+        "maximumLogFiles": 15
     },
     {
         "taskName": "Music",
@@ -15,7 +18,10 @@
         "destFolder": "/Backups/Music",
         "exclude": [
             "/*.cue"
-        ]
+        ],
+        "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
+        "showCommand": true,
+        "maximumLogFiles": 15
     },
     {
         "taskName": "Photos",
@@ -24,6 +30,9 @@
         "destFolder": "/Backups/Photos",
         "exclude": [
             "*.webp"
-        ]
+        ],
+        "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
+        "showCommand": true,
+        "maximumLogFiles": 15
     }
 ]

@@ -2,20 +2,6 @@
  Runs `rclone sync` to sync folders.
 #>
 
-# ------ variables Start ------
-
-# 设置 rclone flags
-$rcloneFlags = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"
-
-# 显示完整执行命令
-$showCommand = $true
-
-# 设置最大日志文件数量
-$maximumLogFiles = 15
-
-# ------ variables End ------
-
-
 # ------ Sync-Folders Function Start ------
 function Sync-Folders {
     param (
@@ -32,7 +18,9 @@ function Sync-Folders {
         [Parameter()]
         [string]$rcloneFlags = "",
         [Parameter()]
-        [switch]$showCommand
+        [switch]$showCommand,
+        [Parameter()]
+        [int]$maximumLogFiles = 15
     )
 
     # rclone 同步文件夹主要命令
@@ -80,6 +68,7 @@ function Sync-Folders {
 # ------ Sync-Folders Function End ------
 
 
+
 # ------ main Start ------
 
 # 检查 rclone 是否已安装
@@ -112,8 +101,9 @@ foreach ($config in $syncConfig) {
         -destFolder $config.destFolder `
         -taskName $config.taskName `
         -exclude $config.exclude `
-        -rcloneFlags $rcloneFlags `
-        -showCommand:$showCommand
+        -rcloneFlags $config.rcloneFlags `
+        -showCommand:$config.showCommand `
+        -maximumLogFiles $config.maximumLogFiles
 }
 
 # ------ main End ------
