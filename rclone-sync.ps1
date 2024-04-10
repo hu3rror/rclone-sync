@@ -9,7 +9,11 @@ function Sync-Folders {
         [Parameter(Mandatory = $true)]
         [string]$LocalFolder,
         [Parameter(Mandatory = $true)]
-        [string]$DestFolder
+        [string]$DestFolder,
+        [Parameter()]
+        [string]$RcloneOptions = "",
+        [Parameter()]
+        [switch]$ShowCommand
     )
 
     # 检查 rclone 是否已安装
@@ -19,13 +23,22 @@ function Sync-Folders {
     }
 
     # 同步文件夹
-    rclone sync $LocalFolder "${CloudServiceName}:$DestFolder"
+    # rclone sync $LocalFolder "${CloudServiceName}:$DestFolder"
+    $rcloneCommand = "rclone sync $LocalFolder `"${CloudServiceName}:$DestFolder`" $RcloneOptions"
+    if ($ShowCommand) {
+        Write-Host $rcloneCommand
+    }
+    Invoke-Expression $rcloneCommand
 }
 
 # 读取同步配置
 $syncConfig = Get-Content -Path "sync-config.json" | ConvertFrom-Json
 
+# 设置同步选项
+$rcloneOptions = "--dry-run"
+$ShowCommand = $false
+
 # 执行同步
 foreach ($config in $syncConfig) {
-    Sync-Folders -CloudServiceName $config.cloud_service_name -LocalFolder $config.local_folder -DestFolder $config.destination_folder
+    Sync-Folders -CloudServiceName $config.cloud_service_name -LocalFolder $config.local_folder -DestFolder $config.destination_folder -RcloneOptions $rcloneOptions -ShowCommand:$ShowCommand
 }
