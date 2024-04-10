@@ -1,0 +1,29 @@
+[
+    {
+        "taskName": "Books",
+        "localFolder": "C:\\Users\\username\\Books",
+        "destName": "MyOneDrive",
+        "destFolder": "/Backups/Books",
+        "exclude": [
+            "/*.txt"
+        ]
+    },
+    {
+        "taskName": "Music",
+        "localFolder": "C:\\Users\\username\\Music",
+        "destName": "MyDropbox",
+        "destFolder": "/Backups/Music",
+        "exclude": [
+            "/*.cue"
+        ]
+    },
+    {
+        "taskName": "Photos",
+        "localFolder": "C:\\Users\\username\\Photos",
+        "destName": "MyGoogleDrive",
+        "destFolder": "/Backups/Photos",
+        "exclude": [
+            "*.webp"
+        ]
+    }
+]
