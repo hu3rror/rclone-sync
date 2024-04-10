@@ -5,7 +5,8 @@
         "destName": "MyOneDrive",
         "destFolder": "/Backups/Books",
         "exclude": [
-            "/*.txt"
+            "/*.txt",
+            "/.git/"
         ],
         "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
         "showCommand": true,
@@ -17,7 +18,8 @@
         "destName": "MyDropbox",
         "destFolder": "/Backups/Music",
         "exclude": [
-            "/*.cue"
+            "/*.cue",
+            "/.git/"
         ],
         "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
         "showCommand": true,
@@ -29,7 +31,8 @@
         "destName": "MyGoogleDrive",
         "destFolder": "/Backups/Photos",
         "exclude": [
-            "*.webp"
+            "*.webp",
+            "/.git/"
         ],
         "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
         "showCommand": true,

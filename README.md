@@ -21,7 +21,7 @@ This PowerShell script runs `rclone sync` to synchronize folders.
 
 **Optional Parameters:**
 - `taskName`: Task name, e.g. `"Downloads"`
-- `exclude`: Array of files or folders to exclude, e.g. `["/*.txt", "/.git"]`
+- `exclude`: Array of files or folders to exclude, e.g. `["/*.txt", "/.git/"]`
 - `rcloneFlags`: Additional rclone flags, e.g. `"--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"`
 - `showCommand`: Display the full `rclone` command: `$true` or `$false`
 - `maximumLogFiles`: Maximum number of log files to keep, e.g. `15`
