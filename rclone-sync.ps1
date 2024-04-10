@@ -46,10 +46,13 @@ function Sync-Folders {
     }
 
     # 添加 --log-file 参数
+    $logFile = Join-Path -Path $logFolder -ChildPath "Untitled.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"
+
     if ($taskName.Length -gt 0) {
         $logFile = Join-Path -Path $logFolder -ChildPath "$taskName.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"    # 定义日志文件名称格式
-        $rcloneCommand += " --log-file=$logFile"
     }
+
+    $rcloneCommand += " --log-file=$logFile"
 
     # 添加更多 rclone flags 选项
     if ($rcloneFlags.Length -gt 0) {
