@@ -11,7 +11,7 @@ This PowerShell script runs `rclone sync` to synchronize folders.
 5. (Optional) Edit variables in `rclone-sync.ps1` as needed.
 6. Run the script:
 ```powershell
-.\rclone-sync.ps1
+.\rclone-sync.ps1 -ConfigFile .\config.json
 ```
 ### Usage
 **Required Parameters:**

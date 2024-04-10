@@ -2,6 +2,12 @@
  Runs `rclone sync` to sync folders.
 #>
 
+# Set/get config file path
+param (
+    [Parameter(Mandatory = $true)]
+    [string]$ConfigFile = "config.json"
+)
+
 # ------ Sync-Folders Function Start ------
 function Sync-Folders {
     param (
@@ -85,13 +91,13 @@ if (-not (Test-Path -Path $logFolder -PathType Container)) {
 }
 
 # check if config.json file exists
-if (-not (Test-Path -Path "config.json" -PathType Leaf)) {
-    Write-Error "cannot find sync config file：config.json"
+if (-not (Test-Path -Path $ConfigFile -PathType Leaf)) {
+    Write-Error "cannot find sync config file：$ConfigFile"
     return
 }
 
 # read sync config from config.json file and convert to object
-$syncConfig = Get-Content -Path "config.json" | ConvertFrom-Json
+$syncConfig = Get-Content -Path $ConfigFile | ConvertFrom-Json
 
 # traverse sync config
 foreach ($config in $syncConfig) {
