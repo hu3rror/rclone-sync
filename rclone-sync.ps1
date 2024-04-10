@@ -2,6 +2,7 @@
  Runs `rclone sync` to sync folders.
 #>
 
+# 定义 Sync-Folders 函数
 function Sync-Folders {
     param (
         [Parameter(Mandatory = $true)]
@@ -57,7 +58,7 @@ $rcloneOptions = "--dry-run -vv"
 # 是否显示完整命令
 $ShowCommand = $true
 
-# 执行同步
+# 遍历同步配置
 foreach ($config in $syncConfig) {
     Sync-Folders `
         -CloudServiceName $config.cloud_service_name `
