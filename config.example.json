@@ -10,7 +10,8 @@
         ],
         "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
         "showCommand": true,
-        "maximumLogFiles": 15
+        "maximumLogFiles": 15,
+        "enabled": true
     },
     {
         "taskName": "Music",
@@ -23,7 +24,8 @@
         ],
         "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
         "showCommand": true,
-        "maximumLogFiles": 15
+        "maximumLogFiles": 15,
+        "enabled": true
     },
     {
         "taskName": "Photos",
@@ -36,6 +38,7 @@
         ],
         "rcloneFlags": "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE",
         "showCommand": true,
-        "maximumLogFiles": 15
+        "maximumLogFiles": 15,
+        "enabled": true
     }
 ]

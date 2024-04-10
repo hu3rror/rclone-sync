@@ -95,15 +95,17 @@ $syncConfig = Get-Content -Path "config.json" | ConvertFrom-Json
 
 # traverse sync config
 foreach ($config in $syncConfig) {
-    Sync-Folders `
-        -localFolder $config.localFolder `
-        -destName $config.destName `
-        -destFolder $config.destFolder `
-        -taskName $config.taskName `
-        -exclude $config.exclude `
-        -rcloneFlags $config.rcloneFlags `
-        -showCommand:$config.showCommand `
-        -maximumLogFiles $config.maximumLogFiles
+    if ($config.enabled) {
+        Sync-Folders `
+            -localFolder $config.localFolder `
+            -destName $config.destName `
+            -destFolder $config.destFolder `
+            -taskName $config.taskName `
+            -exclude $config.exclude `
+            -rcloneFlags $config.rcloneFlags `
+            -showCommand:$config.showCommand `
+            -maximumLogFiles $config.maximumLogFiles
+    }
 }
 
 # ------ main End ------
