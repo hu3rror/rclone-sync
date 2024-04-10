@@ -2,6 +2,20 @@
  Runs `rclone sync` to sync folders.
 #>
 
+# ------ constants and variables Start ------
+
+# 设置 rclone flags
+$rcloneFlags = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"
+
+# 显示完整执行命令
+$showCommand = $true
+
+# 设置最大日志文件数量
+$maximumLogFiles = 15
+
+# ------ constants and variables End ------
+
+
 # ------ Sync-Folders Function Start ------
 function Sync-Folders {
     param (
@@ -20,12 +34,6 @@ function Sync-Folders {
         [Parameter()]
         [switch]$showCommand
     )
-
-    # 检查 rclone 是否已安装
-    if (-not (Get-Command "rclone" -ErrorAction SilentlyContinue)) {
-        Write-Error "rclone 未安装,请先安装 rclone。"
-        return
-    }
 
     # rclone 同步文件夹主要命令
     $rcloneCommand = "rclone sync $localFolder `"${destName}:$destFolder`""
@@ -65,19 +73,24 @@ function Sync-Folders {
         }
     }
 }
+
 # ------ Sync-Folders Function End ------
 
 
-# ------ constants and variables Start ------
+# ------ main Start ------
 
-# 设置 rclone flags
-$rcloneFlags = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"
+# 检查 rclone 是否已安装
+if (-not (Get-Command "rclone" -ErrorAction SilentlyContinue)) {
+    Write-Error "rclone 未安装,请先安装 rclone。"
+    return
+}
 
-# 显示完整执行命令
-$showCommand = $true
+# 创建日志文件夹
+$logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
 
-# 设置最大日志文件数量
-$maximumLogFiles = 15
+if (-not (Test-Path -Path $logFolder -PathType Container)) {
+    New-Item -Path $logFolder -ItemType Directory | Out-Null
+}
 
 # 检测 config.json 文件是否存在
 if (-not (Test-Path -Path "config.json" -PathType Leaf)) {
@@ -85,22 +98,8 @@ if (-not (Test-Path -Path "config.json" -PathType Leaf)) {
     return
 }
 
-# JSON 字符串转换为对象
+# 从 config.json 文件中读取同步配置并转换为对象
 $syncConfig = Get-Content -Path "config.json" | ConvertFrom-Json
-
-# 定义日志文件夹路径
-$logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
-
-
-# ------ constants and variables End ------
-
-
-# ------ main Start ------
-
-# 创建日志文件夹
-if (-not (Test-Path -Path $logFolder -PathType Container)) {
-    New-Item -Path $logFolder -ItemType Directory | Out-Null
-}
 
 # 遍历同步配置
 foreach ($config in $syncConfig) {
