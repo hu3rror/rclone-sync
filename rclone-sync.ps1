@@ -2,6 +2,12 @@
  Runs `rclone sync` to sync folders.
 #>
 
+# 设置 rclone flags
+$rcloneFlags = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level=NOTICE"
+
+# 显示完整执行命令
+$showCommand = $true
+
 # 定义 Sync-Folders 函数
 function Sync-Folders {
     param (
@@ -12,11 +18,11 @@ function Sync-Folders {
         [Parameter(Mandatory = $true)]
         [string]$destFolder,
         [Parameter()]
-        [string]$logFile,
+        [string]$taskName,
         [Parameter()]
         [string[]]$exclude = @(),
         [Parameter()]
-        [string]$rcloneOptions = "",
+        [string]$rcloneFlags = "",
         [Parameter()]
         [switch]$showCommand
     )
@@ -37,9 +43,25 @@ function Sync-Folders {
         $rcloneCommand += " $($excludeArgs -join " ")"
     }
 
+    # 添加 taskName 参数
+    if ($taskName.Length -gt 0) {
+
+        # 创建日志文件夹
+        $logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
+
+        if (-not (Test-Path -Path $logFolder -PathType Container)) {
+            New-Item -Path $logFolder -ItemType Directory | Out-Null
+        }
+
+        # 定义日志文件名称格式
+        $logFile = Join-Path -Path $logFolder -ChildPath "$taskName.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"
+
+        $rcloneCommand += " --log-file=$logFile"
+    }
+
     # 添加更多 rclone flags 选项
-    if ($rcloneOptions.Length -gt 0) {
-        $rcloneCommand += " $rcloneOptions"
+    if ($rcloneFlags.Length -gt 0) {
+        $rcloneCommand += " $rcloneFlags"
     }
 
     # 显示 rclone 完整命令
@@ -54,20 +76,14 @@ function Sync-Folders {
 # 读取同步配置
 $syncConfig = Get-Content -Path "sync-config.json" | ConvertFrom-Json
 
-# 设置同步选项
-$rcloneOptions = "--dry-run --progress --fast-list --transfers=8 --max-backlog=-1 --log-level NOTICE"
-
-# 是否显示完整命令
-$showCommand = $true
-
 # 遍历同步配置
 foreach ($config in $syncConfig) {
     Sync-Folders `
         -localFolder $config.localFolder `
         -destName $config.destName `
         -destFolder $config.destFolder `
-        -logFile $config.logFile `
+        -taskName $config.taskName `
         -exclude $config.exclude `
-        -rcloneOptions $rcloneOptions `
+        -rcloneFlags $rcloneFlags `
         -showCommand:$showCommand
 }
