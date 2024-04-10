@@ -11,6 +11,8 @@ function Sync-Folders {
         [Parameter(Mandatory = $true)]
         [string]$DestFolder,
         [Parameter()]
+        [string[]]$Exclude = @(),
+        [Parameter()]
         [string]$RcloneOptions = "",
         [Parameter()]
         [switch]$ShowCommand
@@ -22,12 +24,27 @@ function Sync-Folders {
         return
     }
 
-    # 同步文件夹
-    # rclone sync $LocalFolder "${CloudServiceName}:$DestFolder"
-    $rcloneCommand = "rclone sync $LocalFolder `"${CloudServiceName}:$DestFolder`" $RcloneOptions"
+    # rclone 同步文件夹主要命令
+    $rcloneCommand = "rclone sync $LocalFolder `"${CloudServiceName}:$DestFolder`""
+
+    # 添加 exclude 参数
+    $excludeArgs = $Exclude | ForEach-Object { "--exclude `"$_`"" }
+
+    if ($excludeArgs.Length -gt 0) {
+        $rcloneCommand += " $($excludeArgs -join " ")"
+    }
+
+    # 添加更多 rclone flags 选项
+    if ($RcloneOptions.Length -gt 0) {
+        $rcloneCommand += " $RcloneOptions"
+    }
+
+    # 显示 rclone 完整命令
     if ($ShowCommand) {
         Write-Host $rcloneCommand
     }
+
+    # 执行 rclone 完整命令
     Invoke-Expression $rcloneCommand
 }
 
@@ -35,10 +52,18 @@ function Sync-Folders {
 $syncConfig = Get-Content -Path "sync-config.json" | ConvertFrom-Json
 
 # 设置同步选项
-$rcloneOptions = "--dry-run"
-$ShowCommand = $false
+$rcloneOptions = "--dry-run -vv"
+
+# 是否显示完整命令
+$ShowCommand = $true
 
 # 执行同步
 foreach ($config in $syncConfig) {
-    Sync-Folders -CloudServiceName $config.cloud_service_name -LocalFolder $config.local_folder -DestFolder $config.destination_folder -RcloneOptions $rcloneOptions -ShowCommand:$ShowCommand
+    Sync-Folders `
+        -CloudServiceName $config.cloud_service_name `
+        -LocalFolder $config.local_folder `
+        -DestFolder $config.destination_folder `
+        -Exclude $config.exclude `
+        -RcloneOptions $rcloneOptions `
+        -ShowCommand:$ShowCommand
 }
