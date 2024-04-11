@@ -7,11 +7,13 @@
 # Set/get config file path / 设置/获取配置文件路径
 param (
     [Parameter(Mandatory = $true)]
-    [string]$ConfigFile = "config.json"
+    [string]$ConfigFile = "config.json",
+    [Parameter()]
+    [string]$RclonePath = "rclone"
 )
 
 # check if rclone is installed / 检查是否安装了 rclone
-if (-not (Get-Command "rclone" -ErrorAction SilentlyContinue)) {
+if (-not (Get-Command $RclonePath -ErrorAction SilentlyContinue)) {
     Write-Error "rclone is not installed, please install rclone first. / rclone 未安装, 请先安装 rclone。"
     return
 }
@@ -58,7 +60,7 @@ function Sync-Folders {
     )
 
     # rclone sync folder command / rclone 同步文件夹命令
-    $rcloneCommand = "rclone sync $localFolder `"${destName}:$destFolder`""
+    $rcloneCommand = "$RclonePath sync $localFolder `"${destName}:$destFolder`""
 
     # add exclude parameter / 添加排除参数
     $excludeArgs = $exclude | ForEach-Object { "--exclude `"$_`"" }    # convert array to comma separated string / 将数组转换为逗号分隔的字符串
@@ -110,6 +112,7 @@ function Sync-Folders {
 # ------ Sync-Folders Function End / 同步文件夹函数结束 ------
 
 # ------ traverse sync config / 遍历同步配置 ------
+
 foreach ($config in $syncConfig) {
     if ($config.enabled) {
         Sync-Folders `
