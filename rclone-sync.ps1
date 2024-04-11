@@ -9,7 +9,9 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$ConfigFile = "config.json",
     [Parameter()]
-    [string]$RclonePath = "rclone"
+    [string]$RclonePath = "rclone",
+    [Parameter()]
+    [string]$LogFolderPath = (Join-Path -Path $PSScriptRoot -ChildPath "logs")
 )
 
 # check if rclone is installed / 检查是否安装了 rclone
@@ -19,10 +21,8 @@ if (-not (Get-Command $RclonePath -ErrorAction SilentlyContinue)) {
 }
 
 # create log folder / 创建日志文件夹
-$logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
-
-if (-not (Test-Path -Path $logFolder -PathType Container)) {
-    New-Item -Path $logFolder -ItemType Directory | Out-Null
+if (-not (Test-Path -Path $LogFolderPath -PathType Container)) {
+    New-Item -Path $LogFolderPath -ItemType Directory | Out-Null
 }
 
 # check if config.json file exists / 检查 config.json 文件是否存在
@@ -38,7 +38,6 @@ $syncConfig = Get-Content -Path $ConfigFile | ConvertFrom-Json
 
 
 # ------ Sync-Folders Function Start / 同步文件夹函数开始 ------
-
 function Sync-Folders {
     param (
         [Parameter(Mandatory = $true)]
@@ -70,10 +69,10 @@ function Sync-Folders {
     }
 
     # add --log-file parameter / 添加 --log-file 参数
-    $logFile = Join-Path -Path $logFolder -ChildPath "Untitled.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"
+    $logFile = Join-Path -Path $LogFolderPath -ChildPath "Untitled.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"
 
     if ($taskName.Length -gt 0) {
-        $logFile = Join-Path -Path $logFolder -ChildPath "$taskName.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"    # define log file name format / 定义日志文件名格式
+        $logFile = Join-Path -Path $LogFolderPath -ChildPath "$taskName.$destName.$(Get-Date -Format 'yyyy-MM-dd-HH-mm-ss').log"    # define log file name format / 定义日志文件名格式
     }
 
     $rcloneCommand += " --log-file=$logFile"
@@ -100,7 +99,7 @@ function Sync-Folders {
     }
 
     # clean log files / 清理日志文件
-    $logFiles = Get-ChildItem -Path $logFolder -Filter "$taskName.$destName.*.log" -File | Sort-Object LastWriteTime
+    $logFiles = Get-ChildItem -Path $LogFolderPath -Filter "$taskName.$destName.*.log" -File | Sort-Object LastWriteTime
     if ($logFiles.Count -gt $maximumLogFiles) {
         $oldLogFiles = $logFiles[0..($logFiles.Count - $maximumLogFiles - 1)]
         foreach ($oldLogFile in $oldLogFiles) {
@@ -112,7 +111,6 @@ function Sync-Folders {
 # ------ Sync-Folders Function End / 同步文件夹函数结束 ------
 
 # ------ traverse sync config / 遍历同步配置 ------
-
 foreach ($config in $syncConfig) {
     if ($config.enabled) {
         Sync-Folders `
