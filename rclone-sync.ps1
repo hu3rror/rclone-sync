@@ -2,13 +2,41 @@
  Runs `rclone sync` to sync folders. / 运行 `rclone sync` 来同步文件夹。
 #>
 
+# ------ main Start / 主程序开始------
+
 # Set/get config file path / 设置/获取配置文件路径
 param (
     [Parameter(Mandatory = $true)]
     [string]$ConfigFile = "config.json"
 )
 
+# check if rclone is installed / 检查是否安装了 rclone
+if (-not (Get-Command "rclone" -ErrorAction SilentlyContinue)) {
+    Write-Error "rclone is not installed, please install rclone first. / rclone 未安装, 请先安装 rclone。"
+    return
+}
+
+# create log folder / 创建日志文件夹
+$logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
+
+if (-not (Test-Path -Path $logFolder -PathType Container)) {
+    New-Item -Path $logFolder -ItemType Directory | Out-Null
+}
+
+# check if config.json file exists / 检查 config.json 文件是否存在
+if (-not (Test-Path -Path $ConfigFile -PathType Leaf)) {
+    Write-Error "cannot find sync config file：$ConfigFile. / 找不到同步配置文件：$ConfigFile。"
+    return
+}
+
+# read sync config from config.json file and convert to object / 从 config.json 文件读取同步配置并转换为对象
+$syncConfig = Get-Content -Path $ConfigFile | ConvertFrom-Json
+
+# ------ main End / 主程序结束------
+
+
 # ------ Sync-Folders Function Start / 同步文件夹函数开始 ------
+
 function Sync-Folders {
     param (
         [Parameter(Mandatory = $true)]
@@ -81,33 +109,7 @@ function Sync-Folders {
 
 # ------ Sync-Folders Function End / 同步文件夹函数结束 ------
 
-
-
-# ------ main Start / 主程序开始------
-
-# check if rclone is installed / 检查是否安装了 rclone
-if (-not (Get-Command "rclone" -ErrorAction SilentlyContinue)) {
-    Write-Error "rclone is not installed, please install rclone first. / rclone 未安装, 请先安装 rclone。"
-    return
-}
-
-# create log folder / 创建日志文件夹
-$logFolder = Join-Path -Path $PSScriptRoot -ChildPath "logs"
-
-if (-not (Test-Path -Path $logFolder -PathType Container)) {
-    New-Item -Path $logFolder -ItemType Directory | Out-Null
-}
-
-# check if config.json file exists / 检查 config.json 文件是否存在
-if (-not (Test-Path -Path $ConfigFile -PathType Leaf)) {
-    Write-Error "cannot find sync config file：$ConfigFile. / 找不到同步配置文件：$ConfigFile。"
-    return
-}
-
-# read sync config from config.json file and convert to object / 从 config.json 文件读取同步配置并转换为对象
-$syncConfig = Get-Content -Path $ConfigFile | ConvertFrom-Json
-
-# traverse sync config / 遍历同步配置
+# ------ traverse sync config / 遍历同步配置 ------
 foreach ($config in $syncConfig) {
     if ($config.enabled) {
         Sync-Folders `
@@ -122,4 +124,4 @@ foreach ($config in $syncConfig) {
     }
 }
 
-# ------ main End / 主程序结束------
+# ------ traverse sync config end / 遍历同步配置结束 ------
